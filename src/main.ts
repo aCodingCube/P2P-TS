@@ -8,6 +8,8 @@ peer.on("open",function(id) {
     console.log(`My Peer id is: ${id}`);
 })
 
+setTimeout(()=>{},1000);
+
 let input:string|null = prompt("id:");
 
 let id:string = input == null ? "" : input;
