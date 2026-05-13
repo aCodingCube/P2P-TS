@@ -9,13 +9,17 @@ peer.on("open", function (id) {
 })
 
 // @ts-ignore
+document.getElementById("connectBtn").addEventListener("click", connect);
+// @ts-ignore
 document.getElementById("messageBtn").addEventListener("click", sendMessage);
 
-function sendMessage() {
+let id:string = "";
 
-    let input: string | null = prompt("id:");
+function connect() {
 
-    let id: string = input == null ? "" : input;
+    let input: string | null = prompt("connect to peer(id):");
+
+    id = input == null ? "" : input;
 
     let conn = peer.connect(id);
 
@@ -24,7 +28,19 @@ function sendMessage() {
             console.log(`received data: ${data}`);
         })
 
-        conn.send(`Hello from ${id}`);
+        conn.send(`Hello connection from ${id}`);
     })
 
+}
+
+function sendMessage() {
+    let conn = peer.connect(id);
+
+    conn.on("open", function () {
+        conn.on("data", (data) => {
+            console.log(`received data: ${data}`);
+        })
+
+        conn.send(`Hello connection from ${id}`);
+    })
 }
