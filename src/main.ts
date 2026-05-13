@@ -8,7 +8,10 @@ peer.on("open", function (id) {
     console.log(`My Peer id is: ${id}`);
 })
 
-function message() {
+// @ts-ignore
+document.getElementById("messageBtn").addEventListener("click", sendMessage);
+
+function sendMessage() {
 
     let input: string | null = prompt("id:");
 
