@@ -1,46 +1,62 @@
-import {Peer} from "peerjs";
+import {type DataConnection, Peer} from "peerjs";
 
 console.log("P2P-TS Test :)");
 
 let peer = new Peer();
+let activeConn:DataConnection|null = null;
 
 peer.on("open", function (id) {
     console.log(`My Peer id is: ${id}`);
 })
 
-// @ts-ignore
-document.getElementById("connectionBtn").addEventListener("click", connect);
-// @ts-ignore
-document.getElementById("messageBtn").addEventListener("click", sendMessage);
+peer.on("connection", (conn) => {
+    console.log("incoming connection from:", conn.peer);
+    setupConn(conn);
+});
 
-let id:string = "";
+function setupConn(conn: DataConnection) {
+    activeConn = conn;
+
+    conn.on("open", ()=>{
+        console.log("connection is ready!");
+
+        conn.on("data",(data)=>{
+            console.log(`received data: ${data}`);
+        })
+    })
+
+    conn.on("close", ()=>{
+        console.log("connection is closed!");
+        activeConn = null;
+    })
+}
 
 function connect() {
+    const input:string|null = prompt("enter id");
+    if(!input){
+        return;
+    }
 
-    let input: string | null = prompt("connect to peer(id):");
-
-    id = input == null ? "" : input;
-
-    let conn = peer.connect(id);
-
-    conn.on("open", function () {
-        conn.on("data", (data) => {
-            console.log(`received data: ${data}`);
-        })
-
-        conn.send(`Hello connection from ${id}`);
-    })
-
+    console.log("building connection...");
+    const conn = peer.connect(input);
+    setupConn(conn);
 }
 
-function sendMessage() {
-    let conn = peer.connect(id);
+function sendMessage(){
+    if(!activeConn|| !activeConn.open){
+        console.log("no available connection");
+        return;
+    }
 
-    conn.on("open", function () {
-        conn.on("data", (data) => {
-            console.log(`received data: ${data}`);
-        })
-
-        conn.send(`Hello connection from ${id}`);
-    })
+    const msg:string|null = prompt("message...");
+    if(msg)
+    {
+        activeConn.send(msg);
+        console.log(`send message: ${msg}`);
+    }
 }
+
+// @ts-ignore
+document.getElementById("messageBtn").addEventListener("click", sendMessage);
+// @ts-ignore
+document.getElementById("connectionBtn").addEventListener("click", connect);
