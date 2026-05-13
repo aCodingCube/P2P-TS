@@ -9,7 +9,7 @@ peer.on("open", function (id) {
 })
 
 // @ts-ignore
-document.getElementById("connectBtn").addEventListener("click", connect);
+document.getElementById("connectionBtn").addEventListener("click", connect);
 // @ts-ignore
 document.getElementById("messageBtn").addEventListener("click", sendMessage);
 
