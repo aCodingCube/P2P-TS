@@ -1,7 +1,5 @@
 import {Peer} from "peerjs";
 
-// Test
-
 console.log("P2P-TS Test :)");
 
 let peer = new Peer();
